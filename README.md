@@ -39,27 +39,26 @@
 ### 环境要求
 - Node.js 16+
 - 现代浏览器（推荐 Chrome、Edge、Firefox 最新版）
-
 ### 安装步骤
 1. 克隆仓库
-\`\`\`bash
+```bash
 git clone [仓库地址]
 cd habit-tracker-app
-\`\`\`
+```
 
 2. 安装依赖
-\`\`\`bash
+```bash
 npm install
 # 或者使用 pnpm
 pnpm install
-\`\`\`
+```
 
 3. 启动开发服务器
-\`\`\`bash
+```bash
 npm run dev
 # 或者使用 pnpm
 pnpm dev
-\`\`\`
+```
 
 ## 🛠️ 技术栈
 
