@@ -76,7 +76,7 @@ export function useLocalSync() {
       }
 
       // 创建备份文件
-      const fileName = \`backup-\${format(new Date(), 'yyyy-MM-dd-HH-mm-ss')}.json\`
+      const fileName = `backup-${format(new Date(), 'yyyy-MM-dd-HH-mm-ss')}.json`
       const fileHandle = await config.handle.getFileHandle(fileName, { create: true })
       const writable = await fileHandle.createWritable()
       await writable.write(JSON.stringify(data, null, 2))
@@ -149,7 +149,7 @@ export function useLocalSync() {
 
       return { 
         success: true, 
-        message: \`成功从 \${files[0].name} 恢复数据！请刷新页面以加载新数据。\` 
+        message: `成功从 ${files[0].name} 恢复数据！请刷新页面以加载新数据。` 
       }
     } catch (error) {
       console.error('恢复失败:', error)
