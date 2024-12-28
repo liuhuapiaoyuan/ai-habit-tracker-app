@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  @apply h-full w-full m-0 p-0 overflow-x-hidden;
+}
+
+body {
+  @apply bg-background font-comic;
+}
+
+.draggable {
+  @apply p-4 m-2 bg-white rounded-lg shadow-cartoon cursor-move;
+}
+
+.progress-bar {
+  @apply h-4 bg-gray-200 rounded-full overflow-hidden;
+}
+
+.progress-fill {
+  @apply h-full bg-secondary transition-all duration-300;
+}
