@@ -20,7 +20,10 @@ export default defineConfig({
           react: ['react', 'react-dom'],
           chartjs: ['chart.js', 'react-chartjs-2'],
           dnd: ['react-beautiful-dnd'],
-          date: ['date-fns']
+          date: ['date-fns'],
+          router: ['react-router-dom'],
+          motion: ['framer-motion'],
+          utils: ['uuid', 'webdav']
         }
       }
     }
