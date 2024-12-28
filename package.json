@@ -20,7 +20,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.1.1",
     "tailwindcss": "^3.3.3",
-    "uuid": "^11.0.3"
+    "uuid": "^11.0.3",
+    "webdav": "^5.7.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
