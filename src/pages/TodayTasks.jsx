@@ -65,8 +65,52 @@ export default function TodayTasks() {
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">今日待办</h2>
+      <div className="relative">
+        <h2 className="text-2xl font-bold mb-4">今日待办</h2>
+        {/* 添加动态图标 */}
+        <motion.div 
+          className={`absolute right-0 top-0 ${uncompletedCount === 0 ? 'glow-effect' : ''}`}
+          animate={{ 
+            rotate: 360,
+            scale: 1 + (todayTasks.filter(task => task.progress === 100).length / todayTasks.length)
+          }}
+          transition={{ 
+            rotate: {
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear"
+            },
+            scale: {
+              duration: 0.5,
+              ease: "easeOut"
+            }
+          }}
+        >
+          <span className="text-4xl">
+            {new Date().getHours() >= 6 && new Date().getHours() < 18 ? '☀️' : '🌙'}
+          </span>
+        </motion.div>
+      </div>
       
+      <style jsx>{`
+        .glow-effect {
+          animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+          from {
+            filter: drop-shadow(0 0 2px rgba(255, 255, 0, 0.8))
+                    drop-shadow(0 0 4px rgba(255, 255, 0, 0.6))
+                    drop-shadow(0 0 6px rgba(255, 255, 0, 0.4));
+          }
+          to {
+            filter: drop-shadow(0 0 4px rgba(255, 255, 0, 0.9))
+                    drop-shadow(0 0 8px rgba(255, 255, 0, 0.7))
+                    drop-shadow(0 0 12px rgba(255, 255, 0, 0.5));
+          }
+        }
+      `}</style>
+
       <div className="bg-white p-6 rounded-lg shadow-cartoon mb-6">
         <p className="text-center text-gray-600">{getMotivationalMessage(uncompletedCount)}</p>
       </div>
