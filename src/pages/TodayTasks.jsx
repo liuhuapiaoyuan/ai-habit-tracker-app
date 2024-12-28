@@ -9,6 +9,7 @@ export default function TodayTasks() {
   const { tasks, completeTask, uncompleteTask } = useTasks()
   const { checkAchievements, newAchievement, clearNewAchievement } = useAchievements()
   const [newAchievementState, setNewAchievementState] = useState(null)
+  const [shakeTaskId, setShakeTaskId] = useState(null)
 
   const today = new Date().getDay()
 
@@ -26,6 +27,9 @@ export default function TodayTasks() {
     const task = todayTasks.find(t => t.id === taskId)
     if (!task) return
 
+    setShakeTaskId(taskId)
+    setTimeout(() => setShakeTaskId(null), 500)
+    
     const updatedTasks = completeTask(taskId)
   }
 
@@ -109,21 +113,71 @@ export default function TodayTasks() {
                     drop-shadow(0 0 12px rgba(255, 255, 0, 0.5));
           }
         }
+
+        .shadow-success {
+          box-shadow: 0 0 10px rgba(72, 187, 120, 0.3),
+                     0 0 20px rgba(72, 187, 120, 0.2),
+                     0 0 30px rgba(72, 187, 120, 0.1);
+        }
+
+        @keyframes task-glow {
+          from {
+            box-shadow: 0 0 10px rgba(72, 187, 120, 0.3),
+                       0 0 20px rgba(72, 187, 120, 0.2),
+                       0 0 30px rgba(72, 187, 120, 0.1);
+          }
+          to {
+            box-shadow: 0 0 15px rgba(72, 187, 120, 0.4),
+                       0 0 30px rgba(72, 187, 120, 0.3),
+                       0 0 45px rgba(72, 187, 120, 0.2);
+          }
+        }
+
+        .animate-glow {
+          animation: task-glow 1.5s ease-in-out infinite alternate;
+        }
       `}</style>
 
       <div className="bg-white p-6 rounded-lg shadow-cartoon mb-6">
         <p className="text-center text-gray-600">{getMotivationalMessage(uncompletedCount)}</p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-8">
         <AnimatePresence>
           {todayTasks.map(task => (
             <motion.div
               key={task.id}
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={task.progress === 100 ? {
+                opacity: 1,
+                y: 0,
+                scale: [1, 1.05, 0.95, 1.05, 0.95, 1],
+                x: [0, -15, 15, -15, 15, -8, 8, 0],
+              } : shakeTaskId === task.id ? {
+                opacity: 1,
+                y: 0,
+                rotate: [0, -5, 5, -3, 3, 0]
+              } : {
+                opacity: 1,
+                y: 0
+              }}
+              transition={shakeTaskId === task.id ? {
+                duration: 0.4,
+                ease: [0.25, 0.1, 0.25, 1],
+                times: [0, 0.2, 0.4, 0.6, 0.8, 1]
+              } : {
+                duration: 0.8,
+                ease: "easeInOut",
+                times: [0, 0.1, 0.3, 0.5, 0.7, 0.8, 0.9, 1]
+              }}
               exit={{ opacity: 0, y: -20 }}
-              className="bg-white p-4 rounded-lg shadow-cartoon"
+              className={`bg-white p-4 rounded-lg transition-all duration-300 cursor-pointer transform hover:scale-[1.02] 
+                ${task.progress === 100 
+                  ? 'shadow-success animate-glow' 
+                  : 'shadow-cartoon'}`}
+              onClick={() => task.progress === 100 
+                ? handleUncompleteTask(task.id) 
+                : handleCompleteTask(task.id)}
             >
               <div className="flex items-center gap-4">
                 <div 
@@ -166,6 +220,61 @@ export default function TodayTasks() {
           ))}
         </AnimatePresence>
       </div>
+
+      <style>{`
+        .glow-effect {
+          animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+          from {
+            filter: drop-shadow(0 0 2px rgba(255, 255, 0, 0.8))
+                    drop-shadow(0 0 4px rgba(255, 255, 0, 0.6))
+                    drop-shadow(0 0 6px rgba(255, 255, 0, 0.4));
+          }
+          to {
+            filter: drop-shadow(0 0 4px rgba(255, 255, 0, 0.9))
+                    drop-shadow(0 0 8px rgba(255, 255, 0, 0.7))
+                    drop-shadow(0 0 12px rgba(255, 255, 0, 0.5));
+          }
+        }
+
+        .shadow-success {
+          box-shadow: 0 0 10px rgba(72, 187, 120, 0.3),
+                     0 0 20px rgba(72, 187, 120, 0.2),
+                     0 0 30px rgba(72, 187, 120, 0.1);
+        }
+
+        @keyframes task-glow {
+          from {
+            box-shadow: 0 0 10px rgba(72, 187, 120, 0.3),
+                       0 0 20px rgba(72, 187, 120, 0.2),
+                       0 0 30px rgba(72, 187, 120, 0.1);
+          }
+          to {
+            box-shadow: 0 0 15px rgba(72, 187, 120, 0.4),
+                       0 0 30px rgba(72, 187, 120, 0.3),
+                       0 0 45px rgba(72, 187, 120, 0.2);
+          }
+        }
+
+        .animate-glow {
+          animation: task-glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes shake {
+          0% { transform: rotate(0deg); }
+          25% { transform: rotate(-5deg); }
+          50% { transform: rotate(0deg); }
+          75% { transform: rotate(5deg); }
+          100% { transform: rotate(0deg); }
+        }
+
+        .shake-animation {
+          animation: shake 0.4s ease-in-out;
+          transform-origin: center;
+        }
+      `}</style>
 
       {newAchievementState && (
         <AchievementNotification
