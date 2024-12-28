@@ -1,9 +1,18 @@
 import React, { useState } from 'react'
 import { format } from 'date-fns'
 import { useWebDAV } from '../hooks/useWebDAV'
+import { useLocalSync } from '../hooks/useLocalSync'
 
 export default function Settings() {
   const { config, saveConfig, testConnection, syncData, loadData } = useWebDAV()
+  const { 
+    config: localConfig, 
+    isSupported, 
+    selectDirectory, 
+    syncToLocal, 
+    restoreFromLocal 
+  } = useLocalSync()
+  
   const [formData, setFormData] = useState({
     url: config.url,
     username: config.username,
@@ -108,9 +117,95 @@ export default function Settings() {
     reader.readAsText(file)
   }
 
+  const handleSelectDirectory = async () => {
+    setMessage(null)
+    const result = await selectDirectory()
+    setMessage(result)
+  }
+
+  const handleLocalSync = async () => {
+    setSyncing(true)
+    setMessage(null)
+    const result = await syncToLocal()
+    setMessage(result)
+    setSyncing(false)
+  }
+
+  const handleLocalRestore = async () => {
+    setSyncing(true)
+    setMessage(null)
+    const result = await restoreFromLocal()
+    setMessage(result)
+    setSyncing(false)
+    if (result.success) {
+      // 3秒后刷新页面
+      setTimeout(() => {
+        window.location.reload()
+      }, 3000)
+    }
+  }
+
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-8">设置</h2>
+
+      {/* 本地目录同步 */}
+      <div className="bg-white rounded-xl p-6 shadow-lg mb-8">
+        <h3 className="text-xl font-semibold mb-6">本地目录同步</h3>
+        {!isSupported() ? (
+          <div className="text-red-500 mb-4">
+            您的浏览器不支持目录访问功能，请使用最新版本的 Chrome、Edge 或其他现代浏览器。
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-500">
+                {localConfig.isConfigured ? '已选择同步目录' : '未选择同步目录'}
+              </span>
+              <button
+                onClick={handleSelectDirectory}
+                className="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white"
+              >
+                {localConfig.isConfigured ? '重新选择目录' : '选择目录'}
+              </button>
+            </div>
+
+            {localConfig.isConfigured && (
+              <>
+                <div className="text-sm text-gray-500">
+                  上次同步: {localConfig.lastSync 
+                    ? format(new Date(localConfig.lastSync), 'yyyy-MM-dd HH:mm:ss')
+                    : '从未同步'}
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleLocalSync}
+                    disabled={syncing}
+                    className={`flex-1 px-4 py-2 rounded-lg ${
+                      syncing
+                        ? 'bg-gray-300 cursor-not-allowed'
+                        : 'bg-green-500 hover:bg-green-600 text-white'
+                    }`}
+                  >
+                    {syncing ? '同步中...' : '备份到本地'}
+                  </button>
+                  <button
+                    onClick={handleLocalRestore}
+                    disabled={syncing}
+                    className={`flex-1 px-4 py-2 rounded-lg ${
+                      syncing
+                        ? 'bg-gray-300 cursor-not-allowed'
+                        : 'bg-orange-500 hover:bg-orange-600 text-white'
+                    }`}
+                  >
+                    {syncing ? '恢复中...' : '从本地恢复'}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* WebDAV 配置 */}
       <div className="bg-white rounded-xl p-6 shadow-lg mb-8">
