@@ -8,7 +8,7 @@ import AchievementsPage from './pages/Achievements'
 import { useTasks } from './hooks/useTasks'
 import { useAchievements } from './hooks/useAchievements'
 import AchievementNotification from './components/AchievementNotification'
-import SettingsModal from './components/SettingsModal'
+import Settings from './pages/Settings'
 
 const pageVariants = {
   initial: { opacity: 0, x: '-100%' },
@@ -26,7 +26,6 @@ function App() {
   const { tasks, updateTask } = useTasks()
   const { unlockedAchievements } = useAchievements(tasks)
   const [newAchievement, setNewAchievement] = useState(null)
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const location = useLocation()
 
   const completeTask = (id) => {
@@ -45,8 +44,8 @@ function App() {
         <Link to="/history" className="p-2 hover:text-primary">完成记录</Link>
         <Link to="/manage" className="p-2 hover:text-primary">管理任务</Link>
         <Link to="/achievements" className="p-2 hover:text-primary">成就</Link>
-        <button
-          onClick={() => setIsSettingsOpen(true)}
+        <Link
+          to="/settings"
           className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
         >
           <svg 
@@ -68,7 +67,7 @@ function App() {
               d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
             />
           </svg>
-        </button>
+        </Link>
       </nav>
 
       {newAchievement && (
@@ -124,13 +123,19 @@ function App() {
               <AchievementsPage tasks={tasks} />
             </motion.div>
           } />
+          <Route path="/settings" element={
+            <motion.div
+              initial="initial"
+              animate="in"
+              exit="out"
+              variants={pageVariants}
+              transition={pageTransition}
+            >
+              <Settings />
+            </motion.div>
+          } />
         </Routes>
       </AnimatePresence>
-
-      <SettingsModal 
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-      />
     </div>
   )
 }
