@@ -34,7 +34,7 @@ const AchievementModal = ({ achievement, onClose }) => {
 
           <button
             onClick={onClose}
-            className="bg-primary text-white px-6 py-2 rounded hover:bg-opacity-90"
+            className="bg-primary text-white px-6 py-2 rounded hover:bg-opacity-90 active:bg-opacity-80 transition-all duration-200"
           >
             关闭
           </button>

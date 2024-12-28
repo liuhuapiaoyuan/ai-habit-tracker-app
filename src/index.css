@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 全局禁用文本选择 */
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 html, body, #root {
   @apply h-full w-full m-0 p-0 overflow-x-hidden;
 }
